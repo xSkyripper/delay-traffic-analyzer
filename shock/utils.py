@@ -3,7 +3,7 @@ import struct
 
 
 #LOOPBACK = '127.0.0.1' BRAVO BOSS
-
+# Multumesc, dragilor
 
 def connect_to_addr(addr):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
