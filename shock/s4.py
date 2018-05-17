@@ -6,7 +6,7 @@ from shock.sqlite3_utils import *
 from pprint import pprint
 
 
-def send_delay(sock_s3, addr_s4):
+def send_delay(sqlite3_conn, sock_s3, addr_s4):
     packer = get_packer('!d 21s d 21s d 21s d 21s')
 
     pack = sock_s3.recv(packer.size)
@@ -18,9 +18,14 @@ def send_delay(sock_s3, addr_s4):
     time_struct[7] = addr_s4.encode('utf-8')
     pprint("[S4] Final timestruct:")
     pprint(time_struct)
+    insert_many_delays(sqlite3_conn, [time_struct[1], "s4", float(time_struct[0])])
+    insert_many_delays(sqlite3_conn, [time_struct[3], "s4", float(time_struct[2])])
+    insert_many_delays(sqlite3_conn, [time_struct[5], "s4", float(time_struct[4])])
+    insert_many_delays(sqlite3_conn, [time_struct[7], "s4", float(time_struct[6])])
 
 
-def send_rtt(sock_s3):
+
+def send_rtt(sqlite3_conn, sock_s3):
     packer = get_packer('!d 21s 21s d 21s 21s d 21s 21s')
 
     _ = sock_s3.recv(3)
@@ -35,6 +40,9 @@ def send_rtt(sock_s3):
     ]
 
     pprint(rtt_struct)
+    insert_many_rtts(sqlite3_conn, [rtt_struct[1], rtt_struct[2], float(rtt_struct[0])])
+    insert_many_rtts(sqlite3_conn, [rtt_struct[4], rtt_struct[5], float(rtt_struct[3])])
+    insert_many_rtts(sqlite3_conn, [rtt_struct[7], rtt_struct[8], float(rtt_struct[6])])
 
 
 analyze_types = click.Choice(['delay', 'rtt'])
@@ -58,9 +66,9 @@ def main(analyze_type, addr_s4, db_sqlite3):
 
     # Process
     if analyze_type == 'delay':
-        send_delay(sock_s3, addr_s4)
+        send_delay(sqlite3_conn,sock_s3, addr_s4)
     elif analyze_type == 'rtt':
-        send_rtt(sock_s3)
+        send_rtt(sqlite3_conn, sock_s3)
 
 
 if __name__ == '__main__':

@@ -2,8 +2,8 @@ import socket
 import struct
 
 
-#LOOPBACK = '127.0.0.1' BRAVO BOSS
-# Multumesc, dragilor
+BROADCAST = '0.0.0.0'
+#LOOPBACK = '127.0.0.1' SCUZE ALEX
 
 def connect_to_addr(addr):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -16,7 +16,7 @@ def create_server(addr):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ip, port = addr.strip().split(":")
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    sock.bind((ip, int(port)))
+    sock.bind((BROADCAST, int(port)))
     sock.listen(1)
     return sock
 

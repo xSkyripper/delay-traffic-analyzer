@@ -25,9 +25,13 @@ def create_table(conn, table_name, fields):
 
 def insert_many_delays(conn, delays):
     # delays format: list(tuple(str, str, float))
-    conn.executemany('INSERT INTO stats_delay VALUES (?,?,?)', delays)
+    c = conn.cursor()
+    c.execute('INSERT INTO stats_delay VALUES (?,?,?)', delays)
+    conn.commit()
 
 
 def insert_many_rtts(conn, rtts):
     # rtts format: list(tuple(str, str, float))
-    conn.executemany('INSERT INTO stats_rtt VALUE (?,?,?)', rtts)
+    c = conn.cursor()
+    c.execute('INSERT INTO stats_rtt VALUES (?,?,?)', rtts)
+    conn.commit()
