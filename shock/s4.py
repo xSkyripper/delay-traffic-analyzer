@@ -14,14 +14,18 @@ def send_delay(sqlite3_conn, sock_s3, addr_s4):
     print("[S4] Received timestamp {} from S3".format(time_struct))
 
     time_struct = list(time_struct)
-    time_struct[6] = time.time()
+    t = time.time()
+    time_struct[6] = t
     time_struct[7] = addr_s4.encode('utf-8')
     pprint("[S4] Final timestruct:")
     pprint(time_struct)
-    insert_many_delays(sqlite3_conn, [time_struct[1], "s4", float(time_struct[0])])
-    insert_many_delays(sqlite3_conn, [time_struct[3], "s4", float(time_struct[2])])
-    insert_many_delays(sqlite3_conn, [time_struct[5], "s4", float(time_struct[4])])
-    insert_many_delays(sqlite3_conn, [time_struct[7], "s4", float(time_struct[6])])
+    time_struct = [
+        val.decode('utf-8').rstrip('\x00') if isinstance(val, bytes) else val
+        for val in time_struct
+    ]
+    insert_many_delays(sqlite3_conn, [time_struct[1], time_struct[3], float(time_struct[2])-float(time_struct[0])])
+    insert_many_delays(sqlite3_conn, [time_struct[1], time_struct[5], float(time_struct[4])-float(time_struct[2])])
+    insert_many_delays(sqlite3_conn, [time_struct[1], time_struct[7], time_struct[6]-float(time_struct[4])])
 
 
 
