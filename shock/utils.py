@@ -2,7 +2,7 @@ import socket
 import struct
 
 
-LOOPBACK = '127.0.0.1'
+#LOOPBACK = '127.0.0.1' BRAVO BOSS
 
 
 def connect_to_addr(addr):
@@ -16,7 +16,7 @@ def create_server(addr):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     ip, port = addr.strip().split(":")
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    sock.bind((LOOPBACK, int(port)))
+    sock.bind((ip, int(port)))
     sock.listen(1)
     return sock
 
