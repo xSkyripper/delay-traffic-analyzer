@@ -19,7 +19,7 @@ def send_delay(sock_s2, sock_s4, addr_s3):
 
 
 def send_rtt(sock_s2, sock_s4, addr_s3, addr_s4):
-    packer = get_packer('!d 21s 21s d 21s 21s d 21s 21s d 21s 21s')
+    packer = get_packer('!d 21s 21s d 21s 21s d 21s 21s')
 
     _ = sock_s2.recv(3)
     sock_s2.send("RTT".encode('utf-8'))
@@ -46,8 +46,8 @@ analyze_types = click.Choice(['delay', 'rtt'])
 
 @click.command()
 @click.option('-t', '--analyze-type', type=analyze_types, required=True)
-@click.option('-i', '--addr-s3', required=True)
-@click.option('-o', '--addr-s4', required=True, help='ip:port')
+@click.option('-i', '--addr-s3', required=True, help='S3 ip:port')
+@click.option('-o', '--addr-s4', required=True, help='S4 ip:port')
 def main(analyze_type, addr_s3, addr_s4):
     server = create_server(addr_s3)
     print("[S3] Serving at {}".format(addr_s3))

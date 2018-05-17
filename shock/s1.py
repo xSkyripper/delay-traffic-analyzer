@@ -8,20 +8,7 @@ DEFAULT_IP = '255.255.255.255'.encode("utf-8")
 
 def send_delay(sock_s2, addr_s2):
     packer = get_packer('!d 21s d 21s d 21s d 21s')
-
-    time_struct = [
-        DEFAULT_VALUE,
-        DEFAULT_IP,
-
-        DEFAULT_VALUE,
-        DEFAULT_IP,
-
-        DEFAULT_VALUE,
-        DEFAULT_IP,
-
-        DEFAULT_VALUE,
-        DEFAULT_IP,
-    ]
+    time_struct = [DEFAULT_VALUE, DEFAULT_IP] * 4
 
     time_struct[0] = time.time()
     time_struct[1] = addr_s2.encode('utf-8')
@@ -31,25 +18,8 @@ def send_delay(sock_s2, addr_s2):
 
 
 def send_rtt(addr_s1, addr_s2, sock_s2):
-    packer = get_packer('!d 21s 21s d 21s 21s d 21s 21s d 21s 21s')
-
-    rtt_struct = [
-        DEFAULT_VALUE,
-        DEFAULT_IP,
-        DEFAULT_IP,
-
-        DEFAULT_VALUE,
-        DEFAULT_IP,
-        DEFAULT_IP,
-
-        DEFAULT_VALUE,
-        DEFAULT_IP,
-        DEFAULT_IP,
-
-        DEFAULT_VALUE,
-        DEFAULT_IP,
-        DEFAULT_IP,
-    ]
+    packer = get_packer('!d 21s 21s d 21s 21s d 21s 21s')
+    rtt_struct = [DEFAULT_VALUE, DEFAULT_IP, DEFAULT_IP] * 3
 
     rtt_start = time.time()
     sock_s2.send("RTT".encode('utf-8'))
@@ -70,8 +40,8 @@ analyze_types = click.Choice(['delay', 'rtt'])
 
 @click.command()
 @click.option('-t', '--analyze-type', type=analyze_types, required=True)
-@click.option('-i', '--addr-s1', required=True)
-@click.option('-o', '--addr-s2', required=True, help='ip:port')
+@click.option('-i', '--addr-s1', required=True, help='S1 ip:port')
+@click.option('-o', '--addr-s2', required=True, help='S2 ip:port')
 def main(analyze_type, addr_s1, addr_s2):
     sock_s2 = connect_to_addr(addr_s2)
     print("[S1] Connected to S2.")
