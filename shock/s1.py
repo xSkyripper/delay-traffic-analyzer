@@ -48,7 +48,7 @@ def main(analyze_type, addr_s1, addr_s2):
 
     # Process
     if analyze_type == 'delay':
-        send_delay(sock_s2, addr_s2)
+        send_delay(sock_s2, addr_s1)
     elif analyze_type == 'rtt':
         send_rtt(addr_s1, addr_s2, sock_s2)
 
