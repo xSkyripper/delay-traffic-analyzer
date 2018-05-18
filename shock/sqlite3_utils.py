@@ -1,6 +1,3 @@
-import sqlite3
-
-
 def create_table(conn, table_name, fields):
     cursor = conn.cursor()
     cursor.execute(
@@ -26,12 +23,12 @@ def create_table(conn, table_name, fields):
 def insert_many_delays(conn, delays):
     # delays format: list(tuple(str, str, float))
     c = conn.cursor()
-    c.execute('INSERT INTO stats_delay VALUES (?,?,?)', delays)
+    c.execute('INSERT INTO stats_delay (ip_src, ip_dst, delay, comm) VALUES (?,?,?,?)', delays)
     conn.commit()
 
 
 def insert_many_rtts(conn, rtts):
     # rtts format: list(tuple(str, str, float))
     c = conn.cursor()
-    c.execute('INSERT INTO stats_rtt VALUES (?,?,?)', rtts)
+    c.execute('INSERT INTO stats_rtt (ip_src, ip_dst, rtt, comm) VALUES (?,?,?,?)', rtts)
     conn.commit()

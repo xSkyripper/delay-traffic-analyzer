@@ -6,12 +6,12 @@ DEFAULT_VALUE = int("".join(['1' for i in range(19)])) / (10 ** 9)
 DEFAULT_IP = '255.255.255.255'.encode("utf-8")
 
 
-def send_delay(sock_s2, addr_s2):
+def send_delay(sock_s2, addr_s1):
     packer = get_packer('!d 21s d 21s d 21s d 21s')
     time_struct = [DEFAULT_VALUE, DEFAULT_IP] * 4
 
     time_struct[0] = time.time()
-    time_struct[1] = addr_s2.encode('utf-8')
+    time_struct[1] = addr_s1.encode('utf-8')
     pack = packer.pack(*time_struct)
     sock_s2.send(pack)
     print("[S1] Sent timestruct {} to S2".format(time_struct))

@@ -23,10 +23,14 @@ def send_delay(sqlite3_conn, sock_s3, addr_s4):
         val.decode('utf-8').rstrip('\x00') if isinstance(val, bytes) else val
         for val in time_struct
     ]
-    insert_many_delays(sqlite3_conn, [time_struct[1], time_struct[3], float(time_struct[2])-float(time_struct[0])])
-    insert_many_delays(sqlite3_conn, [time_struct[1], time_struct[5], float(time_struct[4])-float(time_struct[2])])
-    insert_many_delays(sqlite3_conn, [time_struct[1], time_struct[7], time_struct[6]-float(time_struct[4])])
 
+    delay_s1_s2 = (float(time_struct[2]) - float(time_struct[0])) * 1000
+    delay_s1_s3 = (float(time_struct[4]) - float(time_struct[0])) * 1000
+    delay_s1_s4 = (float(time_struct[6]) - float(time_struct[0])) * 1000
+
+    insert_many_delays(sqlite3_conn, [time_struct[1], time_struct[3], delay_s1_s2, 'S1 - S2'])
+    insert_many_delays(sqlite3_conn, [time_struct[1], time_struct[5], delay_s1_s3, 'S1 - S3'])
+    insert_many_delays(sqlite3_conn, [time_struct[1], time_struct[7], delay_s1_s4, 'S1 - S4'])
 
 
 def send_rtt(sqlite3_conn, sock_s3):
@@ -44,9 +48,9 @@ def send_rtt(sqlite3_conn, sock_s3):
     ]
 
     pprint(rtt_struct)
-    insert_many_rtts(sqlite3_conn, [rtt_struct[1], rtt_struct[2], float(rtt_struct[0])])
-    insert_many_rtts(sqlite3_conn, [rtt_struct[4], rtt_struct[5], float(rtt_struct[3])])
-    insert_many_rtts(sqlite3_conn, [rtt_struct[7], rtt_struct[8], float(rtt_struct[6])])
+    insert_many_rtts(sqlite3_conn, [rtt_struct[1], rtt_struct[2], float(rtt_struct[0]) * 1000, 'S1-S2'])
+    insert_many_rtts(sqlite3_conn, [rtt_struct[4], rtt_struct[5], float(rtt_struct[3]) * 1000, 'S2-S3'])
+    insert_many_rtts(sqlite3_conn, [rtt_struct[7], rtt_struct[8], float(rtt_struct[6]) * 1000, 'S3-S4'])
 
 
 analyze_types = click.Choice(['delay', 'rtt'])
@@ -59,9 +63,9 @@ analyze_types = click.Choice(['delay', 'rtt'])
 def main(analyze_type, addr_s4, db_sqlite3):
     sqlite3_conn = sqlite3.connect(db_sqlite3)
     create_table(sqlite3_conn, 'stats_delay',
-                 dict(ip_src='text', ip_dst='text', delay='float'))
+                 dict(ip_src='text', ip_dst='text', delay='float', comm='text'))
     create_table(sqlite3_conn, 'stats_rtt',
-                 dict(ip_src='text', ip_dst='text', rtt='float'))
+                 dict(ip_src='text', ip_dst='text', rtt='float', comm='text'))
 
     server = create_server(addr_s4)
     print("[S4] Serving at {}".format(addr_s4))
