@@ -24,13 +24,12 @@ def send_delay(sqlite3_conn, sock_s3, addr_s4):
     t = time.time()
     time_struct[6] = t
     time_struct[7] = addr_s4.encode('utf-8')
-    pprint("[S4] Final timestruct:")
-    pprint(time_struct)
     time_struct = [
         val.decode('utf-8').rstrip('\x00') if isinstance(val, bytes) else val
         for val in time_struct
     ]
 
+    logging.info("[S4] Final time struct {}".format(time_struct))
     delay_s1_s2 = (float(time_struct[2]) - float(time_struct[0])) * 1000
     delay_s1_s3 = (float(time_struct[4]) - float(time_struct[0])) * 1000
     delay_s1_s4 = (float(time_struct[6]) - float(time_struct[0])) * 1000
@@ -49,14 +48,13 @@ def send_rtt(sqlite3_conn, sock_s3):
     logging.info("[S4] Sent RTT to S3")
     pack = sock_s3.recv(packer.size)
     rtt_struct = packer.unpack(pack)
-    logging.info("[S4] Received RTT struct {} from S3\n\n".format(rtt_struct))
 
     rtt_struct = [
         val.decode('utf-8').rstrip('\x00') if isinstance(val, bytes) else val
         for val in rtt_struct
     ]
 
-    pprint(rtt_struct)
+    logging.info("[S4] Received RTT struct {} from S3\n\n".format(rtt_struct))
     insert_many_rtts(sqlite3_conn, [rtt_struct[1], rtt_struct[2], float(rtt_struct[0]) * 1000, 'S1-S2'])
     insert_many_rtts(sqlite3_conn, [rtt_struct[4], rtt_struct[5], float(rtt_struct[3]) * 1000, 'S2-S3'])
     insert_many_rtts(sqlite3_conn, [rtt_struct[7], rtt_struct[8], float(rtt_struct[6]) * 1000, 'S3-S4'])
