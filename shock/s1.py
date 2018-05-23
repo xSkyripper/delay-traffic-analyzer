@@ -61,6 +61,9 @@ def main(analyze_type, addr_s1, addr_s2):
     elif analyze_type == 'rtt':
         send_rtt(addr_s1, addr_s2, sock_s2)
 
+    sock_s2.close()
+    logging.info("[S1] Closed connection with S2.")
+
 
 if __name__ == '__main__':
     main()
