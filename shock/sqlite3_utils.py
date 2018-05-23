@@ -33,7 +33,7 @@ def insert_many_delays(conn, delays):
     c = conn.cursor()
     c.execute('INSERT INTO stats_delay (ip_src, ip_dst, delay, comm) VALUES (?,?,?,?)', delays)
     conn.commit()
-    logging.info("[S4] Inserted {} into stats_delay")
+    logging.info("[S4] Inserted {} into stats_delay".format(delays))
 
 
 def insert_many_rtts(conn, rtts):
@@ -41,4 +41,4 @@ def insert_many_rtts(conn, rtts):
     c = conn.cursor()
     c.execute('INSERT INTO stats_rtt (ip_src, ip_dst, rtt, comm) VALUES (?,?,?,?)', rtts)
     conn.commit()
-    logging.info("[S4] Inserted {} into stats_rtt")
+    logging.info("[S4] Inserted {} into stats_rtt".format(rtts))
